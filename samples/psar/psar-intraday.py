@@ -103,7 +103,7 @@ def parse_args(pargs=None):
         )
     )
 
-    parser.add_argument('--data0', default='../../datas//2006-min-005.txt',
+    parser.add_argument('--data0', default='../../datas/2006-min-005.txt',
                         required=False, help='Data to read in')
 
     # Defaults for dates

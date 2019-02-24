@@ -75,7 +75,9 @@ def runstrat(args=None):
     cerebro.run(**eval('dict(' + args.cerebro + ')'))
 
     if args.plot:  # Plot if requested to
-        cerebro.plot(**eval('dict(' + args.plot + ')'))
+        figure = cerebro.plot(**eval('dict(' + args.plot + ')'))[0]
+        figure.savefig("test.png")
+        
 
 
 def parse_args(pargs=None):
