@@ -30,7 +30,7 @@ class Merkabah(DataBase):
 
     _ST_LIVE, _ST_HISTORBACK, _ST_OVER = range(3)
 
-    def __init__(self, exchange, symbol, ohlcv_limit=None, retries=5)
+    def __init__(self, exchange, symbol, ohlcv_limit=None, retries=5):
         self.symbol = symbol
         self.ohlcv_limit = ohlcv_limit
         self.store = MerkabahStore(exchange, retries)
@@ -91,7 +91,12 @@ class Merkabah(DataBase):
 
         while True:
             dlen = len(self._data)
-            for ohlcv in sorted(self.store.fetch_ohlcv(self.symbol, timeframe=granularity, since=since)):
+            for ohlcv in sorted(
+                    self.store.fetch_ohlcv(
+                        self.symbol,
+                        timeframe=granularity,
+                        since=since
+                    )):
                 if None in ohlcv:
                     continue
 
@@ -116,10 +121,12 @@ class Merkabah(DataBase):
             if trade_id > self._last_id:
                 trade_time = datetime.strptime(
                     trade['datetime'], '%Y-%m-%dT%H:%M:%S.%fZ')
-                self._data.append(
-                    (trade_time, float(trade['price']), float(trade['amount'])))
+                self._data.append((
+                    trade_time,
+                    float(trade['price']),
+                    float(trade['amount']))
+                )
                 self._last_id = trade_id
-
         try:
             trade = self._data.popleft()
         except IndexError:

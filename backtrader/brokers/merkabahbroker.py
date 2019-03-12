@@ -9,7 +9,8 @@ from backtrader.stores.merkabahstore import MerkabahStore, MerkabahOrder
 class MerkabahBroker(BrokerBase):
     ''' Broker implementation for Merkabah trading system.
 
-    This class maps the orders/positions from Merkabah to the internal API of ```backtrader```.
+    This class maps the orders/positions from Merkabah
+    to the internal API of ```backtrader```.
     '''
 
     order_type = {Order.Market: 'market',
@@ -64,17 +65,17 @@ class MerkabahBroker(BrokerBase):
         return order
 
     def buy(self, owner, data, size, price=None, plimit=None,
-            exectype=None, valid=None, tradeid=0, oco=None, trailamount=None, trailpercent=None, **kwargs):
+            exectype=None, valid=None, tradeid=0, oco=None,
+            trailamount=None, trailpercent=None, **kwargs):
         return self._submit(owner, data, exectype, 'buy', size, price, kwargs)
 
     def sell(self, owner, data, size, price=None, plimit=None,
-            exectype=None, valid=None, tradeid=0, oco=None, trailamount=None, trailpercent=None, **kwargs):
+             exectype=None, valid=None, tradeid=0, oco=None,
+             trailamount=None, trailpercent=None, **kwargs):
         return self._submit(owner, data, exectype, 'sell', size, price, kwargs)
 
     def cancel(self, order):
         return self.store.cancel_order(order)
-    
+     
     def get_orders_open(self, safe=False):
         return self.store.fetch_open_orders()
-    
-    

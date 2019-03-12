@@ -20,7 +20,6 @@ api_actions = {
     "fetch_open_orders": "trading/{0}/fetch_open_orders/",
     "fetch_order": "trading/{0}/fetch_order/{1}",
     "fetch_orders": "trading/{0}/fetch_orders/{1}",
-    "fetch_open_orders": "trading/{0}/",
     "fetch_ohlcv": "ohlcv/{0}/{1}/{2}/{3}"
 }
 
@@ -30,8 +29,10 @@ class MerkabahOrder(OrderBase):
         self.owner = owner
         self.data = data
         self.merkabah_order = merkabah_order
-        self.ordtype = self.Buy if merkabah_order['side'] == 'buy'
-            else self.Sell
+        if merkabah_order['side'] == 'buy':
+            self.ordtype = self.Buy
+        else:
+            self.ordtype = self.Sell
         amount = merkabah_order.get('amount')
         if amount:
             self.size = float(amount)
@@ -69,7 +70,7 @@ class MerkabahStore(object):
     }
 
     def __init__(self, exchange, retries):
-        #self.exchange = getattr(ccxt, exchange)(config)
+        # elf.exchange = getattr(ccxt, exchange)(config)
         self.exchangeName = exchange
         self.exchange = self.api_get('exchange_info')
         self.retries = retries
@@ -78,15 +79,19 @@ class MerkabahStore(object):
         if not api_actions[action]:
             raise "API Action is not defined !"
         r = requests.get(url=urllib.parse.urljoin(
-            api_url, api_actions[action].format(self.exchangeName, *path_params)))
+            api_url,
+            api_actions[action].format(self.exchangeName, *path_params))
+        )
         # extract data in json format
         return r.json()
 
-    def api_post(action, path_params=[], json_data):
+    def api_post(action, json_data, path_params=[]):
         if not api_actions[action]:
             raise "API Action is not defined !"
-        r = requests.post(url=urllib.parse.urljoin(api_url, api_actions[action].format(
-            self.exchangeName, *path_params)), json=json_data)
+        r = requests.post(url=urllib.parse.urljoin(
+            api_url,
+            api_actions[action].format(self.exchangeName, *path_params)
+        ), json=json_data)
         # extract data in json format
         return r.json()
 
@@ -94,18 +99,25 @@ class MerkabahStore(object):
         # market data that should check if hasFetchOHLCV
         canFetch = self.exchange.has['fetchOHLCV']
         if not canFetch:
-            raise NotImplementedError("'%s' exchange doesn't support fetching OHLCV data" %
-                                      self.exchange.name)
+            raise NotImplementedError(
+                "'%s' exchange doesn't support fetching OHLCV data" %
+                self.exchange.name
+            )
 
         granularity = self._GRANULARITIES.get((timeframe, compression))
         if granularity is None:
-            raise ValueError("backtrader CCXT module doesn't support fetching OHLCV "
-                             "data for time frame %s, comression %s" %
-                             (bt.TimeFrame.getname(timeframe), compression))
+            raise ValueError(
+                "backtrader CCXT module doesn't support fetching OHLCV "
+                "data for time frame %s, comression %s" %
+                (bt.TimeFrame.getname(timeframe), compression)
+            )
 
-        if self.exchange.timeframes and granularity not in self.exchange.timeframes:
-            raise ValueError("'%s' exchange doesn't support fetching OHLCV data for "
-                             "%s time frame" % (self.exchange.name, granularity))
+        if self.exchange.timeframes:
+            if granularity not in self.exchange.timeframes:
+                raise ValueError(
+                    "'%s' exchange doesn't support fetching OHLCV data for "
+                    "%s time frame" % (self.exchange.name, granularity)
+                )
 
         return granularity
 
@@ -140,14 +152,14 @@ class MerkabahStore(object):
 
     @retry
     def create_order(self, symbol, order_type, side, amount, price, params):
-        return self.api_post('create_order', [], {
+        return self.api_post('create_order', {
             'symbol': symbol,
             'type': order_type,
             'side': side,
             'amount': amount,
             'price': price,
             'params': params
-        })
+        }, [])
 
     @retry
     def cancel_order(self, order):
