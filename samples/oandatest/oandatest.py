@@ -32,7 +32,6 @@ StoreCls = bt.stores.OandaStore
 DataCls = bt.feeds.OandaData
 # BrokerCls = bt.brokers.OandaBroker
 
-
 class TestStrategy(bt.Strategy):
     params = dict(
         smaperiod=5,

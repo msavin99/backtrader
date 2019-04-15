@@ -39,5 +39,9 @@ try:
 except ImportError:
     pass  # The user may not have a module installed
 
+try:
+    from .merkabahstore import MerkabahStore
+except ImportError:
+    pass
 
 from .vchartfile import VChartFile

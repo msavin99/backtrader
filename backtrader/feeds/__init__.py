@@ -47,6 +47,10 @@ try:
 except ImportError:
     pass  # The user may not have something installed
 
+try:
+    from .merkabahfeeds import MerkabahData
+except ImportError:
+    pass
 
 from .vchartfile import VChartFile
 

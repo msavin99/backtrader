@@ -9,7 +9,7 @@ from backtrader.feed import DataBase
 from backtrader.stores.merkabahstore import MerkabahStore
 
 
-class Merkabah(DataBase):
+class MerkabahData(DataBase):
     """
     CryptoCurrency eXchange Trading Library Data Feed.
     Params:
